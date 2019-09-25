@@ -1,19 +1,15 @@
+### Koen Van Noten - Royal Observatory of Belgium
+### HVSR to Virtual Borehole
+### Version 0.0: August 2017 - python 2
+### Version 1.0: April 2019 - python 3
+
+
 import matplotlib.pyplot as plt
+import pandas as pd
 import numpy as np
 import matplotlib.gridspec as gridspec
-import csv
-import os
-import matplotlib.path as mpath
 import matplotlib.collections as mcoll
 from scipy.interpolate import interp1d
-from scipy.interpolate import griddata
-#from scipy.stats import powerlaw
-from matplotlib.ticker import MultipleLocator
-
-### HVSR 2007 Brussels Celine
-# all_data = r'C:\BGD\HVSR\HV Brussels Petermans\HVRS Petermans Bxl_redo_CG\HVSR 2017 field notes.csv'
-# all_folder = r'C:\BGD\HVSR\HV Brussels 2017 campaign\HVSR results\all data'
-# savefolder = r'C:\BGD\HVSR\HV Brussels 2017 campaign\HVSR Spectra'
 
 # ### HVSR 2017 Brussels
 all_data = r'C:\BGD\HVSR\HV Brussels 2017 campaign\HVSR results\all data\HVSR 2017 all 20180407.csv'
@@ -21,61 +17,36 @@ all_folder = r'C:\BGD\HVSR\HV Brussels 2017 campaign\HVSR results\all data'
 savefolder = r'C:\BGD\HVSR\HV Brussels 2017 campaign\HVSR Spectra'
 
 plot_one = 1
-ID = 'A258'
+ID = 'A257'
 
-
-#Powerlaw Bxl Justine Molron
-#a_pw = 94.228
-#b_pw = -1.758
+# Choose if you want to use the Geopsy values or want to interpolate between 0 and 15000 frequency values
+interpolate = 1
 
 #New Powerlaws Bxl Koen Van Noten
-#All
-a_pw = 89.0 #new EGU all
-b_pw = -1.680
+# R: Regional powerlaw
+a_pw = 87.93     #AL
+b_pw = -1.636
 
-# a_pw = 87.85 #new EGU indiv Bxl
-# b_pw = -1.73
+# geologically dependent powerlaws
+# R1: Clayey formations KOR HAN
+a_R1 = 85.10    #AL
+b_R1 = -1.532
 
-# a_pw = 94.606 #old excel
-# b_pw = -1.634
+# R2: alluvial
+a_R2 = 86.31     #AL
+b_R2 = -1.818
 
-#Separated
-a_SHH_Bxl = 94.606      #Shh-Ld-Mal-Bxl
-b_SHH_Bxl = -1.634
+# R3: Sandy Formations
+a_R3 = 91.08      #Shh-Ld-Mal-Bxl
+b_R3 = -1.555
 
-#a_Al = 88.604   #Alluvial above Moen and Brussels
-#b_Al = -1.667
-
-#a_StM = 
-#b_Stm =    #St-Maur
-
-##### Christian Anderlecht
-#all_data = r'C:\BGD\HVSR\HV KBIN\HVSR Anderlecht 20170919.csv'
-#all_folder = r'C:\BGD\HVSR\HV KBIN'
-#savefolder = r'C:\BGD\HVSR\HV KBIN'
-##Powerlaw Kortrijk Formation
-#a_pw = 83.147
-#b_pw = -1.278
-
-##### HVSR Powerlaw paper
-#all_data = r'C:\OMA\VanNotenetal2017 BW Site effects\F0 data selection_without bxl.csv'
-#savefolder = r'C:\OMA\VanNotenetal2017 BW Site effects\HVSR results'
-
-#HVSR Prodigy paper
-#all_folder = r'C:\OMA\Lecocqetal Prodigy\\HVSR prodigy & mac'
-#all_file = 'Prodigy files.csv'
-#savefolder = r'C:\OMA\Lecocqetal Prodigy\HVSR prodigy & mac'
-
-#all_data = all_folder + '\%s'%all_file
-#print all_data
-
-
+################################ Let's go
 #data selection
 def make_segments(x, y):
-    '''
+    """"
     Create list of line segments from x and y coordinates, in the correct format for LineCollection:
     an array of the form   numlines x (points per line) x 2 (x and y) array
-    '''
+    """
     points = np.array([x, y]).T.reshape(-1, 1, 2)
     segments = np.concatenate([points[:-1], points[1:]], axis=1)
 
@@ -99,126 +70,136 @@ def colorline(x, y, z, cmap=plt.get_cmap('copper'), linewidth=10, alpha=1.0):
     return lc
 
 def plot_data(in_filespec,ID):
-    data = np.genfromtxt(in_filespec, delimiter='\t', usecols=(0,1,2,3))
-    f_orig = f = data[:,0]
-    A_min = data[:,2]
-    A_orig = A = data[:,1]
-    A_max = data[:,3]
-    NaNs = np.isnan(data)
-    data[NaNs] = 0
+    ### load data
+    df = pd.read_csv(in_filespec, delimiter='\t', skiprows=9, names=['Frequency', 'Average', 'Min', 'Max'])
+    f = df["Frequency"]
+    A_min = df['Min']
+    A0 = df['Average']
+    A_max = df['Max']
+    NaNs = np.isnan(df)
+    df[NaNs] = 0
 
-    #Interpolate data to have a smoothed HVSR curve
-    func = interp1d(f_orig, A_orig, 'cubic')
-    f_new = np.linspace(f_orig[0], f_orig[-1],15000)
+    ### in stead of using the output of Geopsy, one can interpolate the entire HVSR curve for 15000 points to improve f0
+    if interpolate:
+        # interpolate for A0
+        func = interp1d(f, A0, 'cubic')
+        f_ip = np.linspace(f[0], f[len(f) - 1], 15000)
+        A0_ip = func(f_ip)
 
-    A_new = func(f_new)
-#    A = np.interp(f, f_orig, A_orig)
-    func = interp1d(f_orig, A_min, 'cubic')
-    A_min = func(f_new)
-    func = interp1d(f_orig, A_max, 'cubic')
-    A_max = func(f_new)
-#    print "A_max: ", A_max
-    A_orig = A = A_new
-    f_orig = f = f_new
-    A_plot = A*0
+        # interpolate for A_min
+        func = interp1d(f, A_min, 'cubic')
+        A_min_ip = func(f_ip)
 
-    #plotter
+        # interpolate for A_max
+        func = interp1d(f, A_max, 'cubic')
+        A_max_ip = func(f_ip)
+
+        # overwrite original f, A0
+        A0 = A0_ip
+        f = f_ip
+        A_min = A_min_ip
+        A_max = A_max_ip
+
+    A_plot = A0 * 0
+
+    ### Plot the Amplitude - frequency diagram and the virtual borehole
     gs = gridspec.GridSpec(1, 2, width_ratios=[12, 1])
     plt.suptitle(ID)
     ax0 = plt.subplot(gs[0])
-#    plt.plot(A,f, linewidth=0.8)
-    plt.plot(A_new,f_new, linewidth=0.7)
-    maxx = np.argmax(A_new)
-#    maxx = 265   #overwrite atuomatic Amplitude
-    print("maxx: ", maxx, A_new[maxx], f_new[maxx])
-#    plt.axhline(f_new[maxx], c='g', ls='--')
+    plt.plot(A0,f, linewidth=0.7)
+    maxx = np.argmax(A0)
+
+    print("index max:", maxx, "A0:", round(A0[maxx],2), "fmax: ",round(f[maxx],2))
+    plt.axhline(f[maxx], c='g', ls='--')
     plt.fill_betweenx(f, A_min, A_max, color = 'lightgrey', zorder = -100)
     ax0.set_yscale('log')
-    colorline(A_plot, f, A, cmap='viridis', linewidth=5)
-    colorbar = colorline(A_plot, f, A, cmap='viridis', linewidth=10)
+    colorline(A_plot, f, A0, cmap='viridis', linewidth=5)
+    colorbar = colorline(A_plot, f, A0, cmap='viridis', linewidth=10)
     plt.colorbar(colorbar, cmap = 'viridis', label = "Amplitude")
 
-    #plot f0
-    A_max = np.max(A)
-#    A_max = np.where(np.max(A)[0.8,1.2])
+    #### function to find and plot f0 values from the geopsy files
+    A_max = np.max(A0) # find largest amplitude in the geopsy or interpolated values
+    #A_max = np.where(np.max(A)[0.8,1.2])   # sometimes amplitude is higher at other values dan f0, avoid this by defining a range in which we need to search
+
     with open(in_filespec) as file:
             for line in file:
-                    columns = line.split()
                     if line.startswith('# f0 from average'):
                                  split = line.strip().split('\t')
                                  f0_average = float(split[1])
-                                 print ("f0_avg: {}".format(f0_average))
+                                 print ("f0_average: %s"%round(f0_average,3)) #average f0 picked by geopsy
                     if line.startswith('# Peak amplitude'):
                                  split = line.split('\t')
-                                 A0 = float(split[1])
+                                 A0_geopsy = float(split[1]) #A0 picked by geopsy
                     if line.startswith('# f0 from windows'):
                                  split = line.strip().split('\t')
                                  f0min = float(split[2])
-                                 print (f0min)
+                                 print ("f0 min: %s"%round(f0min,2))
                                  f0 = float(split[1])
-                                 print ("f0_win: %s"%f0)
+                                 print ("f0_win: %s"%round(f0,3))
                                  error = float(f0 - f0min)
-                                 print (error)
+                                 print ("error: %s"%round(error,3))
  
+    if interpolate:
+        ### plot a horizontal line for the average if you want to plot the interpolated f0 value
+        plt.axhline(y=f[maxx], xmin=0, xmax=20, color='red', linewidth=0.5, zorder=-100)
+        print("f0_ip = ", round(f[maxx], 3))
+        f0_min = float(f[maxx] - error)
+        f0_max = float(f[maxx] + error)
+        depth = a_pw * np.power(f[maxx], b_pw)
+    else:
+        ### plot a horizontal line for the average if you want to plot the geopsy f0 value
+        plt.axhline(y=f0_average, xmin=0, xmax=20,color = 'red', linewidth=0.5, zorder = -100)
+        f0_min = float(f0_average - error)
+        f0_max = float(f0_average + error)
+        # convert frequency to depth using the powerlaw relation
+        depth = a_pw * np.power(f0_average, b_pw)
 
-#    f_new[maxx] = 0.956061     #overwrite automatic frequency picking
-#     plot the horizontal line for the average
-#    plt.axhline(y=f0_average, xmin=0, xmax=20,color = 'red', linewidth=0.5, hold=None, zorder = -100)
-    #plot the horizontal line for the interpolation
-    plt.axhline(y=f_new[maxx], xmin=0, xmax=20,color = 'red', linewidth=0.5, hold=None, zorder = -100)
-    f0_min = float(f0_average - error)
-    f0_max = float(f0_average + error)
-    plt.axhline(y=f0_min, xmin=0, xmax=20,color = 'grey', linewidth=0.5, ls = '--', hold=None, zorder = -100)
-    plt.axhline(y=f0_max, xmin=0, xmax=20,color = 'grey', linewidth=0.5, ls = '--', hold=None, zorder = -100)   
-#    # title for f0
-#    plt.title("$f_0$_graph: %.2f"%f0_average + "; $f_0$: %.3f"%f0 + r"$\pm$%.3f"%error + "(err)" +
-    # r"$\pm$%.3f"%(f_new[maxx]-f0_average)+ "($f_0$ip); " + "$A_0$: %.2f"%A0, size = 10)
-    # Title for f0 interpolated
-    # plt.title("$f_0$_graph: %.3f"%f0_average + "; $f_0$ interpolated: %.3f"%f_new[maxx] + r"$\pm$%.3f"%error + "(err)" +
-    #           r"$\pm$%.3f"%(f0 - f_new[maxx])+ "($f_0$); " + "$A_0$: %.2f"%A0, size = 10)
-    plt.title("$f_0$ int.: %.3f" % f_new[maxx] + r"$\pm$%.3f" %error + "(err)" + "; $A_0$: %.2f" % A0, size=10)
-    print ("$f_0$_ip = ", f_new[maxx])
+    ### plot horizontal lines for f0_min and f0_max using the error provided by geopsy
+    plt.axhline(y=f0_min, xmin=0, xmax=20, color='grey', linewidth=0.5, ls='--', zorder=-100)
+    plt.axhline(y=f0_max, xmin=0, xmax=20,color = 'grey', linewidth=0.5, ls = '--', zorder = -100)
+
+    plt.title("$f_0$ int.: %.3f" % f[maxx] + r"$\pm$%.3f" %error + "(err)" + "; $A_0$: %.2f" % A0_geopsy, size=10)
     plt.ylabel("Frequency (Hz)", fontsize=10)
     plt.xlabel("Amplitude", fontsize=10)
     plt.xlim(-1,20)
     plt.ylim(0.5,50)
   
-  #Making a depth plot
+    #### Making the virtual borehole in function of depth
     ax1 = plt.subplot(gs[1])
+    # convert frequency to depth using the powerlaw relation for all frequencies
     h = a_pw*np.power(f,b_pw)
+
+    #defining the errorbars in the virtual borehole
     depth_min = a_pw*np.power(f0_min,b_pw)
     depth_max = a_pw*np.power(f0_max,b_pw)
-#    depth = a_pw*np.power(f0_average,b_pw)
-    depth = a_pw*np.power(f_new[maxx],b_pw)
-    depth_f0max = a_pw*np.power(f_new[maxx],b_pw)
-    altitude = Z - depth
-    altitude_min = Z - depth_min 
-    altitude_max = Z - depth_max
-    altitude_f0max = Z - depth_f0max 
+
+    # calculating absolute depth; Z = altitude of borehole
+    bedrock = Z - depth
+    bedrock_min = Z - depth_min
+    bedrock_max = Z - depth_max
     all_depths = Z - h
-#    print "Z: ", Z 
-#    print "altitude: ", altitude, "(range: ", altitude_min, ", ", altitude_max, ")"
-    
-    colorline(A_plot, all_depths, A_new, cmap='viridis', linewidth=50)
-    plt.ylim(Z+10, Z-depth-20)   
+
+    print ("Z: ", round(Z,2))
+    print ("bedrock at", round(bedrock,1), " m (range: ", round(bedrock_min,1), "m, ", round(bedrock_max,1), "m)")
+    colorline(A_plot, all_depths, A0, cmap='viridis', linewidth=50)
+
+    plt.ylim(Z+10, Z-depth-20)
     plt.gca().invert_yaxis()
     plt.ylabel("Altitude bedrock (m TAW)", fontsize=10)
     ax1.axes.get_xaxis().set_ticks([])
     ax1.yaxis.set_label_position("right")
     ax1.yaxis.tick_right()
-    savefile = savefolder + '\%s'%ID + ".png"
-    plt.title("Bedrock at %.0f"%(depth) + " m", size = 10)
-        ##alternative depth from f0 interpolated
-#    plt.title("BM at %s"%int(depth) + "or %s"%int(depth_f0max) + " m", size = 10)
-    plt.axhline(y=altitude, xmin=0, xmax=20,color = 'red', linewidth=0.8, hold=None, zorder = 100)
-    plt.axhline(y=altitude_min, xmin=0, xmax=20,color = 'black', linewidth=0.8, hold=None, zorder = 100)
-    plt.axhline(y=altitude_max, xmin=0, xmax=20,color = 'black', linewidth=0.8, hold=None, zorder = 100)
-        # plot horizontal line from f0 picked from the interpolated maximum
-#    plt.axhline(y=altitude_f0max, xmin=0, xmax=20,color = 'purple', linewidth=0.8, hold=None, zorder = 100)
-    plt.axhline(y=Z, xmin=0, xmax=20,color = 'black', linewidth=0.7, hold=None, zorder = 100)
-    plt.annotate('%s'%int(Z) + " m", xy=(0.,Z), fontsize = 8)
-    plt.savefig(savefile, format= 'png', dpi = 600)
 
+    plt.axhline(y=bedrock, xmin=0, xmax=20,color = 'red', linewidth=0.8, zorder = 100)
+    plt.axhline(y=bedrock_min, xmin=0, xmax=20,color = 'black', linewidth=0.8, zorder = 100)
+    plt.axhline(y=bedrock_max, xmin=0, xmax=20,color = 'black', linewidth=0.8, zorder = 100)
+    plt.axhline(y=Z, xmin=0, xmax=20,color = 'black', linewidth=0.7, zorder = 100)
+    plt.annotate('%s'%int(Z) + " m", xy=(0.,Z), fontsize = 8)
+
+    #save it
+    plt.title("Bedrock at %.0f" % (bedrock) + " m", size=10)
+    savefile = savefolder + '\%s' % ID + ".png"
+    plt.savefig(savefile, format= 'png', dpi = 600)
 
 if plot_one:            # Find filename from ID nr & convert 1 HVSR
     keys = [] 	#ID's 
