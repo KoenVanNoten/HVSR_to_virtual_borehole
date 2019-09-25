@@ -10,5 +10,5 @@
 
 4. Use f0_to_virtual_borehole.py: Replot one or all .hv files into a f0 versus amplitude plot + convert the H/V spectrum to a VIRTUAL BOREHOLE using either one mean Vs value or with regression function between f0 and depth.
 
-![](https://github.com/KoenVanNoten/HVSR_to_virtual_borehole/blob/master/A260.png | width=100)
+<img src="https://github.com/KoenVanNoten/HVSR_to_virtual_borehole/blob/master/A260.png" width="200" height="400" />
 
