@@ -17,7 +17,7 @@ all_folder = r'C:\BGD\HVSR\HV Brussels 2017 campaign\HVSR results\all data'
 savefolder = r'C:\BGD\HVSR\HV Brussels 2017 campaign\HVSR Spectra'
 
 plot_one = 1
-ID = 'A257'
+ID = 'A260'
 
 # Choose if you want to use the Geopsy values or want to interpolate between 0 and 15000 frequency values
 interpolate = 1
@@ -110,7 +110,6 @@ def plot_data(in_filespec,ID):
     maxx = np.argmax(A0)
 
     print("index max:", maxx, "A0:", round(A0[maxx],2), "fmax: ",round(f[maxx],2))
-    plt.axhline(f[maxx], c='g', ls='--')
     plt.fill_betweenx(f, A_min, A_max, color = 'lightgrey', zorder = -100)
     ax0.set_yscale('log')
     colorline(A_plot, f, A0, cmap='viridis', linewidth=5)
