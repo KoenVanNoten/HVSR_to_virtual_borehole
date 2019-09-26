@@ -4,7 +4,7 @@
 
 2. Do that xxx times for the entire database and update your database file (see HVSR database.csv) with the necessary information (ID, Filename, altitude of measurements, ...)
 
-# f0_from_HV.py
+# Get f0s from geopsy hv files.py
 3. Load all HVSR data (min f0, f0, max f0, error, max Amplitude, n of windows) automatically from all .hv files listed in the database file. The default setting of Geopsy to export the H/V spectrum is set to 100 samples (100 freq. and Amplitude values), no matter the range in the output frequency sampling. If this default sampling setting is used, a wide output range, e.g. 0.5 Hz to 50 Hz, will pick f0 less accurately than if a narrow range around the peak amplitude is selected. To increase the f0 picking accuracy, one can increase the sample setting to the maximum (e.g. 9999 samples in Geospy) in Geopsy. Or one can resample the Geopsy output curve by a performing a linear interpolation up to 15000 samples (interpolation used in this script). This results in a slightly different interpolated amplitude maximum and f0 than the one exported by Geopsy. The interpolated values will be exported to the databse file.
 
 # f0_to_virtual_borehole.py: 
