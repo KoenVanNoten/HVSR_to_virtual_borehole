@@ -16,4 +16,4 @@ Script to replot one or all .hv files into a f0 versus amplitude plot and to con
 ## 4.HVSR polarisation.py:
 The H/V rotational module in Geopsy computes the azimuth in which the resonance frequency has a maximum amplitude. To facilate reading this polarisation, this python script plots the variance of the amplitude with azimuth in a polar plot. The IDs to plot will be loaded from the HVSR database file. Polarisation data (Amax, Amin and their corresponding azimuths and frequencues) will be exported to a seperate file which then can be visualised in a GIS.
 Output:
-<img src="https://github.com/KoenVanNoten/HVSR_to_virtual_borehole/blob/master/A201_polarisation.png" width="500" height="300" />
+<img src="https://github.com/KoenVanNoten/HVSR_to_virtual_borehole/blob/master/A201_polarisation.png" width="500" height="400" />
