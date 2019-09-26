@@ -212,4 +212,4 @@ if plot_one:
 else:
     for i,j,k in zip(name,Z,HV_name):
         print(k)
-        plot_data('%s' % k + '.hv', i, j)
+        plot_data(k + '.hv', i, j)
