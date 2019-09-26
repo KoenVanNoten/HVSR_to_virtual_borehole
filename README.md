@@ -1,5 +1,6 @@
-# HVSR_to_virtual_borehole
+## HVSR_to_virtual_borehole
 
+# Create .hv files in Geopsy
 1. Conduct H/V spectral ratio analyses from gathered ambient noise measurements in Geopsy and save the output of Geopsy as .hv file.
 
 2. Do that xxx times for the entire database and update your database file (see HVSR database.csv) with the necessary information (ID, Filename, altitude of measurements, ...)
