@@ -14,12 +14,12 @@ all_data = 'HVSR database file_f0_from_hv.csv'
 
 ### choose to plot all files from a list or only one specific ID given in below
 ### if plot_all is True, rotational data will be exported to a "HVSR rotation.csv
-plot_all = False 	#False = manual search
+plot_all = True 	#False = manual search
 IDs = ['A201']
 #IDS = ['A201','A202']
 
 #setting the frequency limit of the plot, if auto_freq = True, frequency will be chosen automatically based around f0
-auto_freq = 1
+auto_freq = True
 limfreq_min = 0.5
 limfreq_max = 1.5
 
@@ -30,7 +30,6 @@ A_manual = 6
 
 ####spacing of the ticks on the frequency distribution
 steps = 0.2
-
 
 ################################################
 rot_data = []
@@ -159,27 +158,24 @@ if plot_all:
 	else:
 		#set maximum amplitude from A0 provided in the database list
 		A0_max = np.max(df2["A0"])
-	easting = df_database['Easting'][(name == ID).values.argmax()]
-	northing = df_database['Northing'][(name == ID).values.argmax()]
+	for i in IDs:
+		try:
+			plot_rotationaldata('%s' % i, i)
+		except:
+			pass
 
+	# save data to csv
+	names = ["ID", "A_max", "max_freq", "max_Azi", "A_min", "min_freq", "min_Azi", "Easting", "Northing"]
+	with open("HVSR rotation.csv", 'w', newline='') as results:
+		wr = csv.writer(results)
+		wr.writerow(names)
+		for i in rot_data:
+			wr.writerow(i)
 else:
 	IDs = IDs
 	if manual:
 		A0_max = A_manual	
 	else:
-		A0_max = 0
-
-for i in IDs:
-	try:
-		plot_rotationaldata('%s'%i, i)
-	except:
-		pass
-
-#save data to csv
-if plot_all:
-	names=["ID", "A_max", "max_freq", "max_Azi","A_min", "min_freq", "min_Azi", "Easting","Northing"]
-	with open("HVSR rotation.csv",'w',newline='') as results:
-		wr = csv.writer(results)
-		wr.writerow(names)
-		for i in rot_data:
-			wr.writerow(i)
+		A0_max = 20
+	for i in IDs:
+		plot_rotationaldata('%s' % i, i)
