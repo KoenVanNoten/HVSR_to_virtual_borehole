@@ -98,7 +98,6 @@ def plot_data(in_filespec,ID, Z):
     ax0 = plt.subplot(gs[0])
     plt.plot(A0,f, linewidth=0.7)
     maxx = np.argmax(A0)
-
     print("index max:", maxx, "A0:", round(A0[maxx],2), "fmax: ",round(f[maxx],2))
     plt.fill_betweenx(f, A_min, A_max, color = 'lightgrey', zorder = -100)
     ax0.set_yscale('log')
@@ -106,11 +105,10 @@ def plot_data(in_filespec,ID, Z):
     colorbar = colorline(A_plot, f, A0, cmap='viridis', linewidth=10)
     plt.colorbar(colorbar, cmap = 'viridis', label = "Amplitude")
 
-    '''
+
     #### function to find and plot f0 values from the geopsy files
-    A_max = np.max(A0) # find largest amplitude in the geopsy or interpolated values
+    #A_max = np.max(A0) # find largest amplitude in the geopsy or interpolated values
     #A_max = np.where(np.max(A)[0.8,1.2])   # sometimes amplitude is higher at other values dan f0, avoid this by defining a range in which we need to search
-    '''
 
     with open(in_filespec) as file:
             for line in file:
@@ -148,7 +146,6 @@ def plot_data(in_filespec,ID, Z):
     ### plot horizontal lines for f0_min and f0_max using the error provided by geopsy
     plt.axhline(y=f0_min, xmin=0, xmax=20, color='grey', linewidth=0.5, ls='--', zorder=-100)
     plt.axhline(y=f0_max, xmin=0, xmax=20,color = 'grey', linewidth=0.5, ls = '--', zorder = -100)
-
     plt.title("$f_0$ int.: %.3f" % f[maxx] + r"$\pm$%.3f" %error + "(err)" + "; $A_0$: %.2f" % A0_geopsy, size=10)
     plt.ylabel("Frequency (Hz)", fontsize=10)
     plt.xlabel("Amplitude", fontsize=10)
@@ -169,9 +166,9 @@ def plot_data(in_filespec,ID, Z):
     bedrock_min = Z - depth_min
     bedrock_max = Z - depth_max
     all_depths = Z - h
-
     print ("Z: ", round(Z,2))
     print ("bedrock at", round(bedrock,1), " m (range: ", round(bedrock_min,1), "m, ", round(bedrock_max,1), "m)")
+
     colorline(A_plot, all_depths, A0, cmap='viridis', linewidth=50)
 
     plt.ylim(Z+10, Z-depth-20)
@@ -180,15 +177,14 @@ def plot_data(in_filespec,ID, Z):
     ax1.axes.get_xaxis().set_ticks([])
     ax1.yaxis.set_label_position("right")
     ax1.yaxis.tick_right()
-
     plt.axhline(y=bedrock, xmin=0, xmax=20,color = 'red', linewidth=0.8, zorder = 100)
     plt.axhline(y=bedrock_min, xmin=0, xmax=20,color = 'black', linewidth=0.8, zorder = 100)
     plt.axhline(y=bedrock_max, xmin=0, xmax=20,color = 'black', linewidth=0.8, zorder = 100)
     plt.axhline(y=Z, xmin=0, xmax=20,color = 'black', linewidth=0.7, zorder = 100)
     plt.annotate('%s'%int(Z) + " m", xy=(0.,Z), fontsize = 8)
+    plt.title("Bedrock at %.0f" % (bedrock) + " m", size=10)
 
     #save it
-    plt.title("Bedrock at %.0f" % (bedrock) + " m", size=10)
     savefile = '%s' % ID + ".png"
     plt.savefig(savefile, format= 'png', dpi = 600)
     print('')
@@ -208,7 +204,6 @@ if plot_one:
     plt.show()
 
 # plot all HVSR data
-
 else:
     for i,j,k in zip(name,Z,HV_name):
         print(k)
