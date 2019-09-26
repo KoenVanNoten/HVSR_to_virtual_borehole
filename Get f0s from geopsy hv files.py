@@ -66,15 +66,15 @@ for id, row in outputfile.iterrows():
     #write all data to the database file
     outputfile.loc[id, "f0_min"] = data["f_min"] #f0 min
     print("f0_min:", round(data["f_min"],3), "Hz")
-    outputfile.loc[id, "f0_win"] = data["f0_win"] #mean f0 calculated from the windows
+    outputfile.loc[id, "f0_win"] = data["f0_win"] #average f0 computed by averaging the peak f0 values of all individual windows
     print("f0_win:", round(data["f0_win"],3), "Hz")
-    outputfile.loc[id, "f0_average"] = data["f0_avg"] #mean f0 determined maximum amplitude of the mean f0 - Amplitude curve
+    outputfile.loc[id, "f0_average"] = data["f0_avg"] #f0 corresponding to the maximum amplitude of the average f0 - Amplitude curve
     print("f0_average:", round(data["f0_avg"],3), "Hz")
     outputfile.loc[id, "f0_ip"] = f_new[maxx] #interpolated f0 from 15000 samples
     print("f0_ip:", round(f_new[maxx],3), "Hz")
     outputfile.loc[id, "f0_ip_diff"] = f0_ip_diff #difference between f0_interpolated and f0_win
     print ("f0_ip_diff:", round(f0_ip_diff,3), "Hz")
-    outputfile.loc[id, "error"] = data["error"] #error on f0 in Geopsy
+    outputfile.loc[id, "error"] = data["error"] #error on f0_win in Geopsy
     print("error:", round(data["error"],3), "Hz")
     outputfile.loc[id, "f0_max"] = data["f_max"] #f0 max
     print("f0_max:", round(data["f_max"],3), "Hz")
