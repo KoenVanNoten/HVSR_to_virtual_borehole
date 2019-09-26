@@ -11,36 +11,26 @@ import matplotlib.gridspec as gridspec
 import matplotlib.collections as mcoll
 from scipy.interpolate import interp1d
 
-# ### HVSR 2017 Brussels
-all_data = r'C:\BGD\HVSR\HV Brussels 2017 campaign\HVSR results\all data\HVSR 2017 all 20180407.csv'
-all_folder = r'C:\BGD\HVSR\HV Brussels 2017 campaign\HVSR results\all data'
-savefolder = r'C:\BGD\HVSR\HV Brussels 2017 campaign\HVSR Spectra'
+# ### Load the HVSR data and the database csv overviewfile from the folder
+all_data = 'HVSR database file.csv'
 
-plot_one = 1
-ID = 'A260'
+# Plot only one Virtual Borehole with the ID given (ID & .hv file need to be in the database file)
+# If plot_one = 0; all .hv files will be plotted as a Virtual Borehole
+plot_one = 0
+ID = 'A202'
 
 # Choose if you want to use the Geopsy values or want to interpolate between 0 and 15000 frequency values
+# See annotations in "Get f0s from geopsy hv files.py" for more information
 interpolate = 1
 
-#New Powerlaws Bxl Koen Van Noten
-# R: Regional powerlaw
-a_pw = 87.93     #AL
-b_pw = -1.636
+# f0 needs to be converted to depth by: e.g. using a Powerlaw relation between res. frequency and depth
+# according to the formula: h = a * power(f0, b)
+# a & b values of the Regional powerlaw relation (R) of Van Noten et al. 2019.
+a_pw = 87.93     # a value
+b_pw = -1.636    # b value
 
-# geologically dependent powerlaws
-# R1: Clayey formations KOR HAN
-a_R1 = 85.10    #AL
-b_R1 = -1.532
+################################# Let's go
 
-# R2: alluvial
-a_R2 = 86.31     #AL
-b_R2 = -1.818
-
-# R3: Sandy Formations
-a_R3 = 91.08      #Shh-Ld-Mal-Bxl
-b_R3 = -1.555
-
-################################ Let's go
 #data selection
 def make_segments(x, y):
     """"
@@ -69,7 +59,7 @@ def colorline(x, y, z, cmap=plt.get_cmap('copper'), linewidth=10, alpha=1.0):
 
     return lc
 
-def plot_data(in_filespec,ID):
+def plot_data(in_filespec,ID, Z):
     ### load data
     df = pd.read_csv(in_filespec, delimiter='\t', skiprows=9, names=['Frequency', 'Average', 'Min', 'Max'])
     f = df["Frequency"]
@@ -79,7 +69,7 @@ def plot_data(in_filespec,ID):
     NaNs = np.isnan(df)
     df[NaNs] = 0
 
-    ### in stead of using the output of Geopsy, one can interpolate the entire HVSR curve for 15000 points to improve f0
+    ### Instead of using the output of Geopsy, one can interpolate the entire HVSR curve for 15000 points to improve f0
     if interpolate:
         # interpolate for A0
         func = interp1d(f, A0, 'cubic')
@@ -116,9 +106,11 @@ def plot_data(in_filespec,ID):
     colorbar = colorline(A_plot, f, A0, cmap='viridis', linewidth=10)
     plt.colorbar(colorbar, cmap = 'viridis', label = "Amplitude")
 
+    '''
     #### function to find and plot f0 values from the geopsy files
     A_max = np.max(A0) # find largest amplitude in the geopsy or interpolated values
     #A_max = np.where(np.max(A)[0.8,1.2])   # sometimes amplitude is higher at other values dan f0, avoid this by defining a range in which we need to search
+    '''
 
     with open(in_filespec) as file:
             for line in file:
@@ -197,39 +189,27 @@ def plot_data(in_filespec,ID):
 
     #save it
     plt.title("Bedrock at %.0f" % (bedrock) + " m", size=10)
-    savefile = savefolder + '\%s' % ID + ".png"
+    savefile = '%s' % ID + ".png"
     plt.savefig(savefile, format= 'png', dpi = 600)
+    print('')
 
-if plot_one:            # Find filename from ID nr & convert 1 HVSR
-    keys = [] 	#ID's 
-    name = []
-    HV_name = []
-    Z_indiv = []
-    with open(all_data) as file:
-            next(file)
-            for line in file:
-                    columns = line.split(',')
-                    name.append((columns[2]))	#name the ID column
-                    HV_name.append(columns[15])	#name the filename column
-                    Z_indiv.append(float(columns[8]))   # altitude from AGIV DEM model
-    index = name.index(ID)      # index the ID line that has to be searched
-    filename = HV_name[index]
-    Z = Z_indiv[index]       # find name based on the nr
-    in_filespec = all_folder + '\%s'%filename + '.hv'
+# Find filename from ID nr & convert 1 HVSR
+df_database = pd.read_csv(all_data, header = 0)
+name = df_database['Name']
+Z = df_database['Z (DEM)']
+HV_name = df_database['Filename']
+
+if plot_one:
+    filename = HV_name[(name == ID).argmax()] # find filename to plot based on the ID
+    Z = Z[(name == ID).argmax()]
+    in_filespec = filename+'.hv'
     print (in_filespec)
-    plot_data(in_filespec, ID)
-else:                   #plot all HVSR data
-    with open(all_data) as file:
-                next(file)
-                for line in file:
-#                    print line
-                    columns = line.split(',')
-                    HV_name = columns[15]
-                    ID = columns[2]
-                    Z = float(columns[8])
-#                    print np.dtype(columns[7])
-                    print (HV_name)
-#                    print Z
-                    plot_data(all_folder + '\%s'%HV_name + '.hv', ID)
+    plot_data(in_filespec, ID, Z)
+    plt.show()
 
-plt.show()
+# plot all HVSR data
+
+else:
+    for i,j,k in zip(name,Z,HV_name):
+        print(k)
+        plot_data('%s' % k + '.hv', i, j)
