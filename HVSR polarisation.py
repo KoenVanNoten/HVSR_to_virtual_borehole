@@ -3,6 +3,10 @@
 ###  	PLOTTING ROTATION H/V RESULTS FROM GEOPSY
 ###  	2019-06-06
 
+### Van Noten, K., Lecocq, T. Gelis, C., Meyvis, B., Molron, J., Debacer, T.N., Devleeschouwer, X. submitted.
+### Bedrock paleorelief modelling using geologically-dependent powerlaw relations between resonance frequency and sediment thickness.
+### Geophysical Journal International
+
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,12 +18,12 @@ all_data = 'HVSR database file_f0_from_hv.csv'
 
 ### choose to plot all files from a list or only one specific ID given in below
 ### if plot_all is True, rotational data will be exported to a "HVSR rotation.csv
-plot_all = True 	#False = manual search
+plot_all = 1	#False = manual search
 IDs = ['A201']
 #IDS = ['A201','A202']
 
 #setting the frequency limit of the plot, if auto_freq = True, frequency will be chosen automatically based around f0
-auto_freq = True
+auto_freq = 0
 limfreq_min = 0.5
 limfreq_max = 1.5
 
@@ -34,7 +38,7 @@ steps = 0.2
 ################################################
 rot_data = []
 
-def plot_rotationaldata(in_filespec,ID):
+def plot_rotationaldata(in_filespec,ID, limfreq_min,limfreq_max):
 	df = pd.read_csv(in_filespec, delimiter=' ', skiprows=0, engine = 'python')
 	freq = df["x"]
 	Azi = df["y"]
@@ -43,12 +47,12 @@ def plot_rotationaldata(in_filespec,ID):
 	### reshape the amplitude column
 	A_reshape = A.values.reshape(19,int(len(freq)/19))
 
-    #define the region where Amplitudes have to be plotted
+	#define the region where Amplitudes have to be plotted
     #freq = xi; yi = Azimuth; A_rehape is amplitude
 	xi = np.array([np.geomspace(np.min(freq), np.max(freq), int(len(freq)/19)),]*19)
 	yi = np.array([np.arange(0,190,10),]*int(len(freq)/19)).transpose()
 
-    ### find the polarization by looking for maximum amplitude for each azimuth
+	### find the polarization by looking for maximum amplitude for each azimuth
     ### and then find the corresponding f0 and azimuth for max A and min A 
 	Amax = []
 	freqmax = []
@@ -70,7 +74,7 @@ def plot_rotationaldata(in_filespec,ID):
 	yj = np.array([np.arange(180,370,10),]*int(len(freq)/19)).transpose()
 
 	#Let's plot
-	plt.figure(figsize=(9,6))
+	plt.figure(figsize=(12,7))
 	ax = plt.subplot(111, polar=True)
 
 	### for log plots - use fixed amplitudes for whole the dataset or use a flexible A0max for each plot
@@ -82,7 +86,7 @@ def plot_rotationaldata(in_filespec,ID):
 		plt.pcolormesh(np.deg2rad(yi), np.log(xi), A_reshape, cmap='viridis', vmin=0, vmax=np.round(A0_max, 0))
 		plt.pcolormesh(np.deg2rad(yj), np.log(xi), A_reshape, cmap='viridis', vmin=0, vmax=np.round(A0_max, 0))
 
-	cbar = plt.colorbar(pad = 0.05, format = '%.0f')
+	cbar = plt.colorbar(pad = 0.1, format = '%.0f')
 	cbar.set_label('H/V Amplitude', rotation=90)
 	
 	plt.scatter(np.deg2rad(max_Azi), np.log(max_freq), c='red', edgecolor='black',  
@@ -97,7 +101,7 @@ def plot_rotationaldata(in_filespec,ID):
 	ax.set_theta_zero_location('N')
 
 	ax.set_rlabel_position(0)
-	ax.text(np.radians(180),np.log(ax.get_rmax()/4),'Frequency',fontsize=12,
+	ax.text(np.radians(180),np.log(ax.get_rmax()/4),'Frequency',fontsize=10,
             rotation=90,ha='left',va='center', color= 'white')
     
 	#limits of the frequency and modify the ticks of the frequency
@@ -116,6 +120,7 @@ def plot_rotationaldata(in_filespec,ID):
 	ax.yaxis.set_major_locator(ticker.FixedLocator(pos_list))
 	ax.yaxis.set_minor_locator(ticker.FixedLocator(pos_list+0.1))
 	ax.yaxis.set_major_formatter(ticker.FixedFormatter((freqs)))
+	ax.yaxis.set_tick_params(labelsize=9)
 
 	rlabels = ax.get_ymajorticklabels()
 	for label in rlabels:
@@ -123,13 +128,13 @@ def plot_rotationaldata(in_filespec,ID):
 		
 	#specify the ticks of the azimuth
 	ax.set_xticks(np.pi/180. * np.linspace(0,  360, 18, endpoint=False))
-	
+
 	plt.legend(loc='best', bbox_to_anchor=(-0.4, -0.35, 0.5, 0.5), frameon=False)
 	plt.grid(linestyle='--', alpha = 0.7, zorder = 200)
 
 	plt.title("Resonance frequency polarisation at "+ID, y=1.08)
 	plt.tight_layout()
-	plt.savefig('%s'%ID + '_polarisation.png', DPI=600)
+	plt.savefig('%s'%ID + '_polarisation.png', DPI=300)
 	
 	#find the lon lat positions from the HVSR database file
 	df_database = pd.read_csv(all_data, header=0)
@@ -153,14 +158,17 @@ print('ID', 'A_max', 'max_freq', 'max_Azi','A_min', 'min_freq', 'min_Azi', 'east
 if plot_all:
 	df2 = pd.read_csv(all_data, delimiter=',', skiprows=0, engine = 'python')
 	IDs = df2["Name"]
-	if manual:
-		A0_max = A_manual	
-	else:
-		#set maximum amplitude from A0 provided in the database list
-		A0_max = np.max(df2["A0"])
+	A0s = df2["A0"]
 	for i in IDs:
+		if manual:
+			A0_max = A_manual
+		else:
+			# set maximum amplitude from A0 provided in the database list
+			# A0_max = np.max(df2["A0"])
+			# set maximum amplitude adapted to each individual A0
+			A0_max = round(A0s[(IDs == i).argmax()] + 1, 0)
 		try:
-			plot_rotationaldata('%s' % i, i)
+			plot_rotationaldata('%s' % i, i, limfreq_min, limfreq_max)
 		except:
 			pass
 
@@ -178,4 +186,4 @@ else:
 	else:
 		A0_max = 20
 	for i in IDs:
-		plot_rotationaldata('%s' % i, i)
+		plot_rotationaldata('%s' % i, i, limfreq_min, limfreq_max)
