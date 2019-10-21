@@ -5,6 +5,7 @@ Van Noten, K., Lecocq, T., Goffin, C., Meyvis, B., Molron, J., Debacker, T. & De
 
 Don't hesitate to cite this source :-)
 The purpose of the codes are to convert data output files of GEOPSY (http://www.geopsy.org/) into more practical figures ready for scientific publishing. 
+
 Enjoy !
 Cheers
 Koen
