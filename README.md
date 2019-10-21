@@ -1,4 +1,13 @@
 # HVSR_to_virtual_borehole
+This Python module contains several scripts that accompany the following submitted paper:
+
+Van Noten, K., Lecocq, T., Goffin, C., Meyvis, B., Molron, J., Debacker, T. & Devleeschouwer, X. submitted. Bedrock morphology modelling using geologically-dependent powerlaw relations between resonance frequency and sediment thickness. Geophysical Journal International.
+
+Don't hesitate to cite this source :-)
+The purpose of the codes are to convert data output files of GEOPSY (http://www.geopsy.org/) into more practical figures ready for scientific publishing. 
+Enjoy !
+Cheers
+Koen
 
 ## 1. Create .hv files in Geopsy
 Conduct H/V spectral ratio analyses from gathered ambient noise measurements in Geopsy and save the output of Geopsy as .hv file.
@@ -16,10 +25,7 @@ This script replots one or all .hv files into a f0 versus amplitude plot and to 
 ## 4. HVSR polarisation.py:
 The H/V rotational module in Geopsy computes the azimuth in which the resonance frequency has a maximum amplitude. To facilate reading this polarisation, this python script plots the variation of the amplitude with azimuth in a polar plot. The IDs to plot will be loaded from the HVSR database file. Polarisation data (Amax, Amin and their corresponding azimuths and frequencues) will be exported to a separate file which then can be visualised in a GIS.
 Output figure:
-<img src="https://github.com/KoenVanNoten/HVSR_to_virtual_borehole/blob/master/A201_polarisation.png" width="450" height="300" />
-
-## Reference - don't hesitate to cite it :-):
-Van Noten, K., Lecocq, T., Goffin, C., Meyvis, B., Molron, J., Debacker, T. & Devleeschouwer, X. submitted. Bedrock morphology modelling using geologically-dependent powerlaw relations between resonance frequency and sediment thickness. Geophysical Journal International
+<img src="https://github.com/KoenVanNoten/HVSR_to_virtual_borehole/blob/master/A201_polarisation.png" width="450" height="250" />
 
 ## Installation
 To run the steps above, you need:
