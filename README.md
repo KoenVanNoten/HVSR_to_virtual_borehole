@@ -1,7 +1,8 @@
 # HVSR_to_virtual_borehole
+https://zenodo.org/badge/180173215.svg
 This Python module contains several scripts that accompany the following submitted paper:
 
-Van Noten, K., Lecocq, T., Goffin, C., Meyvis, B., Molron, J., Debacker, T. & Devleeschouwer, X. submitted. Bedrock morphology modelling using geologically-dependent powerlaw relations between resonance frequency and sediment thickness. Geophysical Journal International.
+Van Noten, K., Lecocq, T., Goffin, C., Meyvis, B., Molron, J., Debacker, T. & Devleeschouwer, X. submitted. Brussels’ bedrock paleorelief from borehole-controlled powerlaws linking polarised H/V resonance frequencies and sediment thickness. Journal of Seismology.
 
 Don't hesitate to cite this source :-)
 The purpose of the codes are to convert data output files of GEOPSY (http://www.geopsy.org/) into more practical figures ready for scientific publishing. 
