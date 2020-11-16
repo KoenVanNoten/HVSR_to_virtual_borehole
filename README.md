@@ -23,7 +23,7 @@ This script loads all HVSR data (min f0, f0, max f0, error, max Amplitude, n of 
 ## 3. HVSR to virtual borehole.py: 
 This script replots one or all .hv files into a f0 versus amplitude plot and to convert the H/V spectrum to a VIRTUAL BOREHOLE using either a regression - powerlaw - function between f0 and depth. See Van Noten et al. 2019 for explanation of the methodology. The figure in below shows the output of the script:
 
-<img src="https://github.com/KoenVanNoten/HVSR_to_virtual_borehole/blob/master/A201.png" width="550" height="400" />
+<img src="https://github.com/KoenVanNoten/HVSR_to_virtual_borehole/blob/master/A201.png" width="550" height="250" />
 
 ## 4. HVSR polarisation.py:
 The H/V rotational module in Geopsy computes the azimuth in which the resonance frequency has a maximum amplitude. To facilate reading this polarisation, this python script plots the variation of the amplitude with azimuth in a polar plot. The IDs to plot will be loaded from the HVSR database file. Polarisation data (Amax, Amin and their corresponding azimuths and frequencues) will be exported to a separate file which then can be visualised in a GIS.
