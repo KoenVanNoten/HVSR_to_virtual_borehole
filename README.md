@@ -1,5 +1,5 @@
 # HVSR_to_virtual_borehole
-<a href="https://zenodo.org/badge/latestdoi/180173215"><img src="https://zenodo.org/badge/180173215.svg" alt="DOI"></a>
+<a href="https://doi.org/10.5281/zenodo.4276310"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.4276310.svg" alt="DOI"></a>
 
 This Python module contains several scripts that accompany the following submitted paper:
 
