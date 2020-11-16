@@ -212,7 +212,6 @@ else:
     df2 = pd.read_csv(all_data, delimiter=',', skiprows=0, engine='python', index_col = "Name")
     A0s = df2["A0"]
     for i in IDs:
-        print(i)
         if manual:
             A0_max = A_manual
         else:
