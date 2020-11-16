@@ -3,6 +3,9 @@
 ### Version 0.0: August 2017 - python 2
 ### Version 1.0: April 2019 - python 3
 
+### Van Noten, K., Lecocq, T. Gelis, C., Meyvis, B., Molron, J., Debacer, T.N., Devleeschouwer, X. submitted.
+### Brussels’ bedrock paleorelief from borehole-controlled powerlaws linking polarised H/V resonance frequencies and sediment thickness.
+### Journal of Seismology
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -16,20 +19,22 @@ all_data = 'HVSR database file.csv'
 
 # Plot only one Virtual Borehole with the ID given (ID & .hv file need to be in the database file)
 # If plot_one = 0; all .hv files will be plotted as a Virtual Borehole
-plot_one = 0
+plot_one = 1
 ID = 'A202'
 
 # Choose if you want to use the Geopsy values or want to interpolate between 0 and 15000 frequency values
 # See annotations in "Get f0s from geopsy hv files.py" for more information
 interpolate = 1
 
-# f0 needs to be converted to depth by: e.g. using a Powerlaw relation between res. frequency and depth
-# according to the formula: h = a * power(f0, b)
-# a & b values of the Regional powerlaw relation (R) of Van Noten et al. 2019.
-a_pw = 87.93     # a value
-b_pw = -1.636    # b value
+## f0 needs to be converted to depth by: e.g. using a Powerlaw relation between resonance frequency and depth
+## according to the formula: h = a * power(f0, b)
+## a & b values of the Regional powerlaw relation (R') of Van Noten et al. 2019.
+a_pw = 88.631     # a value
+b_pw = -1.683    # b value
 
-################################# Let's go
+#################################
+# Main Program
+#################################
 
 #data selection
 def make_segments(x, y):
@@ -149,8 +154,8 @@ def plot_data(in_filespec,ID, Z):
     plt.title("$f_0$ int.: %.3f" % f[maxx] + r"$\pm$%.3f" %error + "(err)" + "; $A_0$: %.2f" % A0_geopsy, size=10)
     plt.ylabel("Frequency (Hz)", fontsize=10)
     plt.xlabel("Amplitude", fontsize=10)
-    plt.xlim(-1,20)
-    plt.ylim(0.5,50)
+    plt.xlim(-1,10)
+    plt.ylim(1,50)
   
     #### Making the virtual borehole in function of depth
     ax1 = plt.subplot(gs[1])
