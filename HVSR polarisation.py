@@ -168,7 +168,7 @@ def plot_rotationaldata(in_filespec,ID, limfreq_min,limfreq_max):
     plt.title("Resonance frequency polarisation of " + ID, y=1.08)
     plt.tight_layout()
     if save_fig:
-        plt.savefig('%s'%ID + '_polarisation.png')
+        plt.savefig('%s'%ID + '_polarisation.pdf')
 
     #find the lon lat positions from the HVSR database file
     df_database = pd.read_csv(all_data, header=0)
