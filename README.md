@@ -21,7 +21,7 @@ Do that xxx times for the entire database and update your database file (see HVS
 This script loads all HVSR data (min f0, f0, max f0, error, max Amplitude, n of windows) automatically from all .hv files listed in the database file. The default setting of Geopsy to export the H/V spectrum is set to 100 samples (100 freq. and Amplitude values), no matter the range in the output frequency sampling. If this default sampling setting is used, a wide output range, e.g. 0.5 Hz to 50 Hz, will pick f0 less accurately than if a narrow range around the peak amplitude is selected. To increase the f0 picking accuracy, one can increase the sample setting to the maximum (e.g. 9999 samples in Geospy) in Geopsy. Or one can resample the Geopsy output curve by a performing a linear interpolation up to 15000 samples (interpolation used in this script). This results in a slightly different interpolated amplitude maximum and f0 than the one exported by Geopsy. The interpolated values (f0_ip & A0)and its difference with F0 from Geopsy (f0_ip_diff) will be exported to the database file.
 
 ## 3. HVSR to virtual borehole.py: 
-This script replots one or all .hv files into a f0 versus amplitude plot and to convert the H/V spectrum to a VIRTUAL BOREHOLE using either a regression - powerlaw - function between f0 and depth. See Van Noten et al. 2019 for explanation of the methodology. The figure in below shows the output of the script:
+This script replots one or all .hv files into a f0 versus amplitude plot and to convert the H/V spectrum to a VIRTUAL BOREHOLE using either a regression - powerlaw - function between f0 and depth. See Van Noten et al. (submitted) for explanation of the methodology. The figure in below shows the output of the script:
 
 <img src="https://github.com/KoenVanNoten/HVSR_to_virtual_borehole/blob/master/A201.png" width="550" height="350" />
 
@@ -30,10 +30,16 @@ The H/V rotational module in Geopsy computes the azimuth in which the resonance 
 
 <img src="https://github.com/KoenVanNoten/HVSR_to_virtual_borehole/blob/master/A201_polarisation.png" width="450" height="350" />
 
+## 5. Construct the f0 - Sed Thickness Powerlaw Relation.ipynb:
+Ipython notebook to construct figures 5,6,7 and 8 in the paper. This notebook reads the supplementary data of the paper: 
+VanNotenetal_JOSE_S1 - Borehole HVSR analysis.csv : Borehole data and picked resonance frequency data
+VanNotenetal_JOSE_S2 - Survey HVSR analysis.csv: Survey HVSR data and picked resonance frequency data
+
 ## Installation
 To run the steps above, you need:
 
 - Python (3.x recommended)
+- Iptyhon notebook
 - Numpy
 - Scipy
 - Pandas
