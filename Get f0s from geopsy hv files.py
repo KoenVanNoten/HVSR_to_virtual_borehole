@@ -3,6 +3,10 @@
 ### Version 0.0: August 2017 - python 2
 ### Version 1.0: April 2019 - python 3
 
+### Van Noten, K., Lecocq, T. Gelis, C., Meyvis, B., Molron, J., Debacer, T.N., Devleeschouwer, X. 2021.
+### Brussels’ bedrock paleorelief from borehole-controlled powerlaws linking polarised H/V resonance frequencies and sediment thickness.
+### Journal of Seismology - https://doi.org/10.1007/s10950-021-10039-8
+
 import numpy as np
 import os
 import pandas as pd
