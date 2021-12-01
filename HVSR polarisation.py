@@ -3,11 +3,11 @@
 ###  	Royal Observatory of Belgium
 ###  	PLOTTING ROTATIONAL H/V RESULTS FROM the .hv module of GEOPSY
 
-### Van Noten, K., Lecocq, T. Gelis, C., Meyvis, B., Molron, J., Debacer, T.N., Devleeschouwer, X. submitted.
+### Van Noten, K., Lecocq, T. Gelis, C., Meyvis, B., Molron, J., Debacer, T.N., Devleeschouwer, X. 2021.
 ### Brussels’ bedrock paleorelief from borehole-controlled powerlaws linking polarised H/V resonance frequencies and sediment thickness.
-### Journal of Seismology
+### Journal of Seismology. https://doi.org/10.1007/s10950-021-10039-8
 
-import csv
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -103,11 +103,11 @@ def plot_rotationaldata(in_filespec,ID, limfreq_min,limfreq_max):
 
     ### for log plots - use fixed amplitudes for whole the dataset or use a flexible A0max for each plot
     if A0_max == 0:
-        plt.pcolormesh(np.deg2rad(yi), np.log(xi), A_reshape, cmap='viridis', vmin=0, vmax=np.round(np.max(A), 0), rasterized=True)
-        plt.pcolormesh(np.deg2rad(yj), np.log(xi), A_reshape, cmap='viridis', vmin=0, vmax=np.round(np.max(A), 0),rasterized=True)
+        plt.pcolormesh(np.deg2rad(yi), np.log(xi), A_reshape, shading='auto', cmap='viridis', vmin=0, vmax=np.round(np.max(A), 0), rasterized=True)
+        plt.pcolormesh(np.deg2rad(yj), np.log(xi), A_reshape, shading='auto', cmap='viridis', vmin=0, vmax=np.round(np.max(A), 0),rasterized=True)
     else:
-        plt.pcolormesh(np.deg2rad(yi), np.log(xi), A_reshape, cmap='viridis', vmin=0, vmax=np.round(A0_max, 0), rasterized=True)
-        plt.pcolormesh(np.deg2rad(yj), np.log(xi), A_reshape, cmap='viridis', vmin=0, vmax=np.round(A0_max, 0), rasterized=True)
+        plt.pcolormesh(np.deg2rad(yi), np.log(xi), A_reshape, shading='auto', cmap='viridis', vmin=0, vmax=np.round(A0_max, 0), rasterized=True)
+        plt.pcolormesh(np.deg2rad(yj), np.log(xi), A_reshape, shading='auto', cmap='viridis', vmin=0, vmax=np.round(A0_max, 0), rasterized=True)
 
     cbar = plt.colorbar(pad = 0.1, format = '%.0f')
     cbar.set_label('H/V Amplitude', rotation=90)
@@ -168,7 +168,7 @@ def plot_rotationaldata(in_filespec,ID, limfreq_min,limfreq_max):
     plt.title("Resonance frequency polarisation of " + ID, y=1.08)
     plt.tight_layout()
     if save_fig:
-        plt.savefig('%s'%ID + '_polarisation.pdf')
+        plt.savefig('%s'%ID + '_polarisation.png')
 
     #find the lon lat positions from the HVSR database file
     df_database = pd.read_csv(all_data, header=0)
@@ -177,13 +177,13 @@ def plot_rotationaldata(in_filespec,ID, limfreq_min,limfreq_max):
     easting = df_database['Easting'][(name == ID).values.argmax()]
     northing = df_database['Northing'][(name == ID).values.argmax()]
 
-    rot_data.append([ID, A_max, max_freq, max_Azi,A_min, min_freq, min_Azi, easting, northing])
+    rot_data.append([A_max, max_freq, max_Azi,A_min, min_freq, min_Azi])
 
     print(ID, round(A_max,2), round(max_freq,2),round(max_Azi,2),round(A_min,2),
-       round(min_freq,2), min_Azi, round(np.float(easting),0), round(np.float(northing),2))
+       round(min_freq,2), min_Azi)
 
 ##### plot all rotational data & apply the definition
-print('ID', 'A_max', 'max_freq', 'max_Azi','A_min', 'min_freq', 'min_Azi', 'easting', 'northing')
+print('ID', 'A_max', 'max_freq', 'max_Azi','A_min', 'min_freq', 'min_Azi')
 
 if plot_all:
     df2 = pd.read_csv(all_data, delimiter=',', skiprows=0, engine = 'python')
@@ -200,6 +200,7 @@ if plot_all:
         except:
             pass
 
+    '''
     # save data to csv
     names = ["ID", "A_max", "max_freq", "max_Azi", "A_min", "min_freq", "min_Azi", "Easting", "Northing"]
     with open("HVSR rotation.csv", 'w', newline='') as results:
@@ -207,6 +208,16 @@ if plot_all:
         wr.writerow(names)
         for i in rot_data:
             wr.writerow(i)
+    '''
+
+    # Export the polarisation data and add it to the HVSR database
+    out_filespec = os.path.splitext(all_data)[0] + "_polarisation.csv"
+    outputfile = pd.read_csv(all_data)
+    df_polarisation = pd.DataFrame(rot_data, columns = ['A_max', 'max_freq',
+														'max_Azi','A_min', 'min_freq', 'min_Azi'])
+    outputfile.join(df_polarisation)
+    outputfile.to_csv(out_filespec, index = False)
+
 else:
     IDs = IDs
     df2 = pd.read_csv(all_data, delimiter=',', skiprows=0, engine='python', index_col = "Name")
