@@ -3,9 +3,9 @@
 ### Version 0.0: August 2017 - python 2
 ### Version 1.0: April 2019 - python 3
 
-### Van Noten, K., Lecocq, T. Gelis, C., Meyvis, B., Molron, J., Debacer, T.N., Devleeschouwer, X. submitted.
+### Van Noten, K., Lecocq, T. Gelis, C., Meyvis, B., Molron, J., Debacer, T.N., Devleeschouwer, X. 2021.
 ### Brussels’ bedrock paleorelief from borehole-controlled powerlaws linking polarised H/V resonance frequencies and sediment thickness.
-### Journal of Seismology
+### Journal of Seismology - https://doi.org/10.1007/s10950-021-10039-8
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -19,12 +19,19 @@ all_data = 'HVSR database file.csv'
 
 # Plot only one Virtual Borehole with the ID given (ID & .hv file need to be in the database file)
 # If plot_one = 0; all .hv files will be plotted as a Virtual Borehole
-plot_one = 1
+plot_one = 0
 ID = 'A202'
 
 # Choose if you want to use the Geopsy values or want to interpolate between 0 and 15000 frequency values
 # See annotations in "Get f0s from geopsy hv files.py" for more information
 interpolate = 1
+
+# Choose if the amplitude on the frequency-amplitude plot needs to be selected automatically or manually
+auto_amplitude = True
+manual_amplitude = 15
+
+# Choose between which frequencies you want to plot. Default = between 0.5 Hz and 50 Hz
+freq = [0.5, 50]
 
 ## f0 needs to be converted to depth by: e.g. using a Powerlaw relation between resonance frequency and depth
 ## according to the formula: h = a * power(f0, b)
@@ -108,7 +115,7 @@ def plot_data(in_filespec,ID, Z):
     ax0.set_yscale('log')
     colorline(A_plot, f, A0, cmap='viridis', linewidth=5)
     colorbar = colorline(A_plot, f, A0, cmap='viridis', linewidth=10)
-    plt.colorbar(colorbar, cmap = 'viridis', label = "Amplitude")
+    plt.colorbar(colorbar, label = "Amplitude")
 
 
     #### function to find and plot f0 values from the geopsy files
@@ -154,8 +161,11 @@ def plot_data(in_filespec,ID, Z):
     plt.title("$f_0$ int.: %.3f" % f[maxx] + r"$\pm$%.3f" %error + "(err)" + "; $A_0$: %.2f" % A0_geopsy, size=10)
     plt.ylabel("Frequency (Hz)", fontsize=10)
     plt.xlabel("Amplitude", fontsize=10)
-    plt.xlim(-1,10)
-    plt.ylim(1,50)
+    if auto_amplitude:
+        plt.xlim(-1, np.max(A_max))
+    else:
+        plt.xlim(-1,manual_amplitude)
+    plt.ylim(freq[0],freq[1])
   
     #### Making the virtual borehole in function of depth
     ax1 = plt.subplot(gs[1])
