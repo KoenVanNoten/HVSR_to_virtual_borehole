@@ -84,4 +84,4 @@ for id, row in outputfile.iterrows():
     print("nw:", int(data["num"]), "windows")
     print('')
 
-outputfile.to_csv(out_filespec)
+outputfile.to_csv(out_filespec, index = False)
