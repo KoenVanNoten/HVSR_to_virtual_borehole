@@ -56,7 +56,7 @@ def plot_rotationaldata(in_filespec,ID, limfreq_min,limfreq_max):
     A_reshape = A.values.reshape(19,int(len(freq)/19))
 
     ## define the region where Amplitudes have to be plotted
-    ## freq = xi; yi = Azimuth; A_rehape is amplitude
+    ## freq = xi; yi = Azimuth; A_reshape is amplitude
     xi = np.array([np.geomspace(np.min(freq), np.max(freq), int(len(freq)/19)),]*19)
     yi = np.array([np.arange(0,190,10),]*int(len(freq)/19)).transpose()
 
@@ -170,17 +170,9 @@ def plot_rotationaldata(in_filespec,ID, limfreq_min,limfreq_max):
     if save_fig:
         plt.savefig('%s'%ID + '_polarisation.png')
 
-    #find the lon lat positions from the HVSR database file
-    df_database = pd.read_csv(all_data, header=0)
-    df_database.head()
-    name = df_database['Name']
-    easting = df_database['Easting'][(name == ID).values.argmax()]
-    northing = df_database['Northing'][(name == ID).values.argmax()]
-
+    #store the data
     rot_data.append([A_max, max_freq, max_Azi,A_min, min_freq, min_Azi])
-
-    print(ID, round(A_max,2), round(max_freq,2),round(max_Azi,2),round(A_min,2),
-       round(min_freq,2), min_Azi)
+    print(ID, round(A_max,2), round(max_freq,2),round(max_Azi,2),round(A_min,2),round(min_freq,2), min_Azi)
 
 ##### plot all rotational data & apply the definition
 print('ID', 'A_max', 'max_freq', 'max_Azi','A_min', 'min_freq', 'min_Azi')
