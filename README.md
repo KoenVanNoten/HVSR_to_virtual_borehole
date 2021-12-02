@@ -35,7 +35,7 @@ VanNotenetal_JOSE_S1 - Borehole HVSR analysis.csv and VanNotenetal_JOSE_S2 - Sur
 
 ## Installation
 To run the steps above, you need:
-
+- Geopsy pack 2019 or above
 - Python (3.x recommended)
 - Iptyhon notebook
 - Numpy
@@ -43,3 +43,4 @@ To run the steps above, you need:
 - Pandas
 - MatPlotLib
 - csv
+- os
