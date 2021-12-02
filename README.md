@@ -12,7 +12,7 @@ Cheers
 Koen
 
 ## 1. Create .hv files in Geopsy
-Conduct H/V spectral ratio analyses from gathered ambient noise measurements in Geopsy and save the output as .hv file in Geopsy.
+Conduct H/V spectral ratio analyses from gathered ambient noise measurements in Geopsy and save the output as .hv file in Geopsy. See A201.hv or A202.hv as example.
 
 Do that for the entire database and update your database file (see HVSR database.csv) with the necessary information (ID, Filename, altitude of measurements, ...)
 
@@ -25,7 +25,7 @@ This script replots one or all .hv files into a f0 versus amplitude plot and to 
 <img src="https://github.com/KoenVanNoten/HVSR_to_virtual_borehole/blob/master/A201.png" width="550" height="350" />
 
 ## 4. HVSR polarisation.py:
-The H/V rotational module in Geopsy computes the azimuth in which the resonance frequency has his maximum amplitude. To facilate reading this polarisation, this python script plots the variation of the amplitude with azimuth in a polar plot. The IDs to plot will be loaded from the HVSR database file. Polarisation data (Amax, Amin and their corresponding azimuths and frequencies) will be exported into the database file which then can be visualised in a GIS. Output figure:
+The H/V rotational module in Geopsy computes the azimuth in which the resonance frequency has his maximum amplitude. In the Geopsy H/V rotate results, right click on the grid file and export values with the same name as you save the H/V results (but without extension, see A201 or A202 as example). To facilate reading this polarisation, this python script plots the variation of the amplitude with azimuth in a polar plot. The IDs to plot will be loaded from the HVSR database file. Polarisation data (Amax, Amin and their corresponding azimuths and frequencies) will be exported into the database file which then can be visualised in a GIS. Output figure:
 
 <img src="https://github.com/KoenVanNoten/HVSR_to_virtual_borehole/blob/master/A201_polarisation.png" width="450" height="350" />
 
