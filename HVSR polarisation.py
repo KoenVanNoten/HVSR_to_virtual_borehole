@@ -195,8 +195,7 @@ if plot_all:
     # Export the polarisation data and add it to the HVSR database
     out_filespec = os.path.splitext(all_data)[0] + "_polarisation.csv"
     outputfile = pd.read_csv(all_data)
-    df_polarisation = pd.DataFrame(rot_data, columns = ['A_max', 'max_freq',
-														'max_Azi','A_min', 'min_freq', 'min_Azi'])
+    df_polarisation = pd.DataFrame(rot_data, columns = ['A_max', 'max_freq', 'max_Azi','A_min', 'min_freq', 'min_Azi'])
     outputfile = outputfile.join(df_polarisation)
     outputfile.to_csv(out_filespec, index = False)
 
