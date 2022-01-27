@@ -3,9 +3,23 @@
 ###  	Royal Observatory of Belgium
 ###  	PLOTTING ROTATIONAL H/V RESULTS FROM the .hv module of GEOPSY
 
-### Van Noten, K., Lecocq, T. Gelis, C., Meyvis, B., Molron, J., Debacer, T.N., Devleeschouwer, X. 2021.
+### Van Noten, K., Lecocq, T. Gelis, C., Meyvis, B., Molron, J., Debacer, T.N., Devleeschouwer, X. 2022.
 ### Brussels’ bedrock paleorelief from borehole-controlled powerlaws linking polarised H/V resonance frequencies and sediment thickness.
 ### Journal of Seismology. https://doi.org/10.1007/s10950-021-10039-8
+
+### This script loads one or all Geopsy HV rotate module files and replots it into a polaris graph.
+### It will pick the azimuth at which the maximum resonance frequency occurs.
+### Data is read from the database file
+
+### All rotational data is exported to the database file named database_file & _polarisation.csv
+### Following data is exported:
+### A_max max_freq max_Azi A_min min_freq min_Azi
+### A_max: maximum amplitude at resonance frequency deduced from the HVSR polarisation analysis (see Fig. 4 of paper)
+### max_freq: Resonance frequency at A_max
+### max_Azi: Azimuth at which resonance frequency is maximum (deduced from polarisation analysis)
+### A_min: minimum amplitude at resonance frequency deduced from the HVSR polarisation analysis (see Fig. 4 of paper)
+### min_fre q:  Azimuth at which resonance frequency is minimal (deduced from polarisation analysis)
+### min_Azi: Azimuth at which resonance frequency is minimum (deduced from polarisation analysis)
 
 import os
 import numpy as np
@@ -14,13 +28,13 @@ import pandas as pd
 import matplotlib.ticker as ticker
 
 # ### load the database containing the ID names
-all_data = 'HVSR database file_f0_from_hv.csv'
+database_file = 'HVSR database file_f0_from_hv.csv'
 
 ### choose to plot all files from a list or only one specific ID given in below
 ### if plot_all is True, rotational data will be exported to a "HVSR rotation.csv" file
-plot_all = 1	#False = manual search
+plot_all = 0	#False = manual search
 IDs = ['A201', 'A202']  #list of data in manual search
-save_fig = 1	# save to fig (default = png)
+save_fig = 0	# save to fig (default = png)
 
 # if auto_freq, frequency will be chosen automatically around f0
 # if false, give the range of the frequency
@@ -178,7 +192,7 @@ def plot_rotationaldata(in_filespec,ID, limfreq_min,limfreq_max):
 print('ID', 'A_max', 'max_freq', 'max_Azi','A_min', 'min_freq', 'min_Azi')
 
 if plot_all:
-    df2 = pd.read_csv(all_data, delimiter=',', skiprows=0, engine = 'python')
+    df2 = pd.read_csv(database_file, delimiter=',', skiprows=0, engine = 'python')
     IDs = df2["Name"]
     A0s = df2["A0"]
     for i in IDs:
@@ -193,15 +207,15 @@ if plot_all:
             pass
 
     # Export the polarisation data and add it to the HVSR database
-    out_filespec = os.path.splitext(all_data)[0] + "_polarisation.csv"
-    outputfile = pd.read_csv(all_data)
+    out_filespec = os.path.splitext(database_file)[0] + "_polarisation.csv"
+    outputfile = pd.read_csv(database_file)
     df_polarisation = pd.DataFrame(rot_data, columns = ['A_max', 'max_freq', 'max_Azi','A_min', 'min_freq', 'min_Azi'])
     outputfile = outputfile.join(df_polarisation)
     outputfile.to_csv(out_filespec, index = False)
 
 else:
     IDs = IDs
-    df2 = pd.read_csv(all_data, delimiter=',', skiprows=0, engine='python', index_col = "Name")
+    df2 = pd.read_csv(database_file, delimiter=',', skiprows=0, engine='python', index_col = "Name")
     A0s = df2["A0"]
     for i in IDs:
         if manual:
