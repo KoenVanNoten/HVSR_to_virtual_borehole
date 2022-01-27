@@ -25,7 +25,7 @@ import os
 import pandas as pd
 from scipy.interpolate import interp1d
 
-# read the database file in which all the names of the .hv measurements are stored
+# read the database file in which all the names of the .hv 	measurements are stored
 database_file = 'HVSR database file.csv'
 out_filespec = os.path.splitext(database_file)[0] + "_f0_from_hv.csv"
 
