@@ -29,12 +29,14 @@ import matplotlib.ticker as ticker
 
 # ### load the database containing the ID names
 database_file = 'HVSR database file_f0_from_hv.csv'
+in_folder = 'Data'
+out_folder = 'Output'
 
 ### choose to plot all files from a list or only one specific ID given in below
 ### if plot_all is True, rotational data will be exported to a "HVSR rotation.csv" file
-plot_all = 1	#False = manual search
+plot_all = 0	#False = manual search
 IDs = ['A201', 'A202']  #list of data in manual search
-save_fig = 1	# save to fig (default = png)
+save_fig = 1	# save results to fig (default = png)
 
 # if auto_freq, frequency will be chosen automatically around f0
 # if false, give the range of the frequency
@@ -182,7 +184,7 @@ def plot_rotationaldata(in_filespec,ID, limfreq_min,limfreq_max):
     plt.title("Resonance frequency polarisation of " + ID, y=1.08)
     plt.tight_layout()
     if save_fig:
-        plt.savefig('%s'%ID + '_polarisation.png')
+        plt.savefig(os.path.join(out_folder, '%s'%ID + '_polarisation.png'))
 
     #store the data
     rot_data.append([A_max, max_freq, max_Azi,A_min, min_freq, min_Azi])
@@ -196,13 +198,14 @@ if plot_all:
     IDs = df2["Name"]
     A0s = df2["A0"]
     for i in IDs:
+        HV_file = os.path.join(in_folder, '%s'% i)
         if manual:
             A0_max = A_manual
         else:
             # set maximum amplitude from A0 provided in the database list
             A0_max = round(A0s[(IDs == i).argmax()] + 1, 0)
         try:
-            plot_rotationaldata('%s' % i, i, limfreq_min, limfreq_max)
+            plot_rotationaldata(HV_file, i, limfreq_min, limfreq_max)
         except:
             pass
 
@@ -218,10 +221,11 @@ else:
     df2 = pd.read_csv(database_file, delimiter=',', skiprows=0, engine='python', index_col = "Name")
     A0s = df2["A0"]
     for i in IDs:
+        HV_file = os.path.join(in_folder, '%s'% i)
         if manual:
             A0_max = A_manual
         else:
             # set maximum amplitude from A0 provided in the database list and add 4
             A0_max = np.array(round(A0s[(i)],0)+1)
-        plot_rotationaldata('%s' % i, i, limfreq_min, limfreq_max)
+        plot_rotationaldata(HV_file, i, limfreq_min, limfreq_max)
         plt.show()
