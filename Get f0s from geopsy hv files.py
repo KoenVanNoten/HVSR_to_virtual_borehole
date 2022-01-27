@@ -1,11 +1,24 @@
 ### Koen Van Noten - Royal Observatory of Belgium
 ### HVSR to Virtual Borehole: loading f0 from .hv Geopsy files
 ### Version 0.0: August 2017 - python 2
-### Version 1.0: April 2019 - python 3
+### Version 1.0: April 2020 - python 3
 
-### Van Noten, K., Lecocq, T. Gelis, C., Meyvis, B., Molron, J., Debacer, T.N., Devleeschouwer, X. 2021.
+### Van Noten, K., Lecocq, T. Gelis, C., Meyvis, B., Molron, J., Debacer, T.N., Devleeschouwer, X. 2022.
 ### Brussels’ bedrock paleorelief from borehole-controlled powerlaws linking polarised H/V resonance frequencies and sediment thickness.
 ### Journal of Seismology - https://doi.org/10.1007/s10950-021-10039-8
+
+### This script loads all Geopsy .hv information into a database file
+### f0_min	f0_win	f0_average	f0_ip	f0_ip_diff	error	f0_max	A0	nw
+
+### #f0 min: f0_win/stddev (from GEOPSY)
+### #f0_win: average resonance frequency by taking the f0 of each individual window and averaging all f0 values from these windows (from GEOPSY)
+### f0 average: scanning the average curve and identifying the frequency at which the maximum amplitude occurs (from GEOPSY)
+### f0_ip: resonance frequency computed after interpolating the HV-Amplitude graph using python (see paper)
+### f0_ip_diff: difference between f0_ip and f0_win
+### error: standard deviation on f0 (from GEOPSY)
+### f0 max: f0_win.stddev (from GEOPSY)
+### A0: maximum amplitude (from GEOPSY)
+### nw: number of windows (from GEOPSY)
 
 import numpy as np
 import os
@@ -13,10 +26,10 @@ import pandas as pd
 from scipy.interpolate import interp1d
 
 # read the database file in which all the names of the measurements are stored
-in_filespec = 'HVSR database file.csv'
-out_filespec = os.path.splitext(in_filespec)[0] + "_f0_from_hv.csv"
+database_file = 'HVSR database file.csv'
+out_filespec = os.path.splitext(database_file)[0] + "_f0_from_hv.csv"
 
-outputfile = pd.read_csv(in_filespec)
+outputfile = pd.read_csv(database_file)
 outputfile.head()
 
 #### Initializing empty columns that need to be filled from the Geopsy .hv files
