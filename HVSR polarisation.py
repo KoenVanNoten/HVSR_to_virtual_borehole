@@ -32,9 +32,9 @@ database_file = 'HVSR database file_f0_from_hv.csv'
 
 ### choose to plot all files from a list or only one specific ID given in below
 ### if plot_all is True, rotational data will be exported to a "HVSR rotation.csv" file
-plot_all = 0	#False = manual search
+plot_all = 1	#False = manual search
 IDs = ['A201', 'A202']  #list of data in manual search
-save_fig = 0	# save to fig (default = png)
+save_fig = 1	# save to fig (default = png)
 
 # if auto_freq, frequency will be chosen automatically around f0
 # if false, give the range of the frequency
