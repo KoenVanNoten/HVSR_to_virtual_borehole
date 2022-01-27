@@ -3,9 +3,13 @@
 ### Version 0.0: August 2017 - python 2
 ### Version 1.0: April 2019 - python 3
 
-### Van Noten, K., Lecocq, T. Gelis, C., Meyvis, B., Molron, J., Debacer, T.N., Devleeschouwer, X. 2021.
+### Van Noten, K., Lecocq, T. Gelis, C., Meyvis, B., Molron, J., Debacer, T.N., Devleeschouwer, X. 2022.
 ### Brussels’ bedrock paleorelief from borehole-controlled powerlaws linking polarised H/V resonance frequencies and sediment thickness.
 ### Journal of Seismology - https://doi.org/10.1007/s10950-021-10039-8
+
+### This script loads one or all Geopsy .hv datafiles and replots it into a virtual borehole.
+### Data is read from the database file
+
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -15,7 +19,7 @@ import matplotlib.collections as mcoll
 from scipy.interpolate import interp1d
 
 # ### Load the HVSR data and the database csv overviewfile from the folder
-all_data = 'HVSR database file.csv'
+database_file = 'HVSR database file.csv'
 
 # Plot only one Virtual Borehole with the ID given (ID & .hv file need to be in the database file)
 # If plot_one = 0; all .hv files will be plotted as a Virtual Borehole
@@ -205,9 +209,9 @@ def plot_data(in_filespec,ID, Z):
     print('')
 
 # Find filename from ID nr & convert 1 HVSR
-df_database = pd.read_csv(all_data, header = 0)
+df_database = pd.read_csv(database_file, header = 0)
 name = df_database['Name']
-Z = df_database['Z (DEM)']
+Z = df_database['z']
 HV_name = df_database['Filename']
 
 if plot_one:
