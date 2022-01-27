@@ -1,7 +1,7 @@
 # HVSR_to_virtual_borehole
 <a href="https://doi.org/10.5281/zenodo.4276310"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.4276310.svg" alt="DOI"></a>
 
-This Python module contains several scripts that accompany the following paper in press:
+This Python module contains several scripts that accompany the following paper:
 
 Van Noten, K., Lecocq, T., Goffin, C., Meyvis, B., Molron, J., Debacker, T. & Devleeschouwer, X. 2022. Brussels’ bedrock paleorelief from borehole-controlled powerlaws linking polarised H/V resonance frequencies and sediment thickness. Journal of Seismology. https://doi.org/10.1007/s10950-021-10039-8
 
