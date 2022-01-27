@@ -7,7 +7,7 @@
 ### Brussels’ bedrock paleorelief from borehole-controlled powerlaws linking polarised H/V resonance frequencies and sediment thickness.
 ### Journal of Seismology - https://doi.org/10.1007/s10950-021-10039-8
 
-### This script loads all Geopsy .hv information into a database file
+### This script loads all following Geopsy .hv information into a database file
 ### f0_min	f0_win	f0_average	f0_ip	f0_ip_diff	error	f0_max	A0	nw
 
 ### #f0 min: f0_win/stddev (from GEOPSY)
