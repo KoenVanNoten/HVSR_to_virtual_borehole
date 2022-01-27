@@ -14,12 +14,15 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import os
 import matplotlib.gridspec as gridspec
 import matplotlib.collections as mcoll
 from scipy.interpolate import interp1d
 
 # ### Load the HVSR data and the database csv overviewfile from the folder
 database_file = 'HVSR database file.csv'
+in_folder = 'Data'
+out_folder = 'Output'
 
 # Plot only one Virtual Borehole with the ID given (ID & .hv file need to be in the database file)
 # If plot_one = 0; all .hv files will be plotted as a Virtual Borehole
@@ -204,7 +207,7 @@ def plot_data(in_filespec,ID, Z):
     plt.title("Bedrock at %.0f" % (bedrock) + " m", size=10)
 
     #save it
-    savefile = '%s' % ID + ".png"
+    savefile = os.path.join(out_folder, '%s' % ID + ".png")
     plt.savefig(savefile, format= 'png', dpi = 600)
     print('')
 
@@ -217,13 +220,14 @@ HV_name = df_database['Filename']
 if plot_one:
     filename = HV_name[(name == ID).argmax()] # find filename to plot based on the ID
     Z = Z[(name == ID).argmax()]
-    in_filespec = filename+'.hv'
-    print (in_filespec)
-    plot_data(in_filespec, ID, Z)
+    HV_file = os.path.join(in_folder, filename +'.hv')
+    print (HV_file)
+    plot_data(HV_file, ID, Z)
     plt.show()
 
 # plot all HVSR data
 else:
     for i,j,k in zip(name,Z,HV_name):
         print(k)
-        plot_data(k + '.hv', i, j)
+        HV_file = os.path.join(in_folder, k + '.hv')
+        plot_data(HV_file, i, j)
