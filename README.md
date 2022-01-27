@@ -3,7 +3,7 @@
 
 This Python module contains several scripts that accompany the following paper in press:
 
-Van Noten, K., Lecocq, T., Goffin, C., Meyvis, B., Molron, J., Debacker, T. & Devleeschouwer, X. 2021. Brussels’ bedrock paleorelief from borehole-controlled powerlaws linking polarised H/V resonance frequencies and sediment thickness. Journal of Seismology. https://doi.org/10.1007/s10950-021-10039-8
+Van Noten, K., Lecocq, T., Goffin, C., Meyvis, B., Molron, J., Debacker, T. & Devleeschouwer, X. 2022. Brussels’ bedrock paleorelief from borehole-controlled powerlaws linking polarised H/V resonance frequencies and sediment thickness. Journal of Seismology. https://doi.org/10.1007/s10950-021-10039-8
 
 The purpose of the codes are to convert data output files of GEOPSY (http://www.geopsy.org/) into more practical figures ready for scientific publishing. 
 
