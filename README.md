@@ -12,7 +12,7 @@ Cheers
 Koen
 
 ## 1. Create .hv files in Geopsy
-Perform the H/V spectral ratio analyses from the gathered ambient noise measurements in Geopsy and save the output as .hv file in Geopsy. See A201.hv or A202.hv as example. Save the .hv files in the Data folder. 
+Perform the H/V spectral ratio analyses from the gathered ambient noise measurements in Geopsy and save the output as .hv file. Store the .hv files in the Data folder. See A201.hv or A202.hv as example.
 
 ## 2. Fill the database
 Do the HVSR analysis for the entire database and update your database file (see HVSR database.csv) with the necessary information (ID, Filename, altitude of measurements, ...)
