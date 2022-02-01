@@ -29,12 +29,12 @@ import matplotlib.ticker as ticker
 
 # ### load the database containing the ID names
 database_file = 'HVSR database file_f0_from_hv.csv'
-in_folder = 'Data'
-out_folder = 'Output'
+in_folder = 'Data' #Folder containing the Geopsy rotate module file
+out_folder = 'Output' #Folder in which the polarisation figures will be saved
 
 ### choose to plot all files from a list or only one specific ID given in below
 ### if plot_all is True, rotational data will be exported to a "HVSR rotation.csv" file
-plot_all = 0	#False = manual search
+plot_all = 1	#False = manual search
 IDs = ['A201', 'A202']  #list of data in manual search
 save_fig = 1	# save results to fig (default = png)
 
@@ -68,23 +68,28 @@ def plot_rotationaldata(in_filespec,ID, limfreq_min,limfreq_max):
     Azi = df["y"]
     A = df["val"]
 
+    ## Get the rotation step. Default = 10° in Geopsy. Can be changed since Geopsy version 3.3.3
+    groups = df.groupby(Azi)
+    rotation_classes = len(groups) ## gives the amount of rotation step classes. = 19 for 10° steps
+    rotation_step = int(180/(rotation_classes-1)) ## gives the rotation_step
+
     ### reshape the amplitude column
-    A_reshape = A.values.reshape(19,int(len(freq)/19))
+    A_reshape = A.values.reshape(rotation_classes,int(len(freq)/rotation_classes))
 
     ## define the region where Amplitudes have to be plotted
     ## freq = xi; yi = Azimuth; A_reshape is amplitude
-    xi = np.array([np.geomspace(np.min(freq), np.max(freq), int(len(freq)/19)),]*19)
-    yi = np.array([np.arange(0,190,10),]*int(len(freq)/19)).transpose()
+    xi = np.array([np.geomspace(np.min(freq), np.max(freq), int(len(freq)/rotation_classes)),]*rotation_classes)
+    yi = np.array([np.arange(0,190,rotation_step),]*int(len(freq)/rotation_classes)).transpose()
 
     ### flip the polar plot to mirror it on the W side
-    yj = np.array([np.arange(180,370,10),]*int(len(freq)/19)).transpose()
+    yj = np.array([np.arange(180,370,rotation_step),]*int(len(freq)/rotation_classes)).transpose()
 
     ### find the polarization by searching for maximum amplitude for each azimuth
     Amax = []
     freqmax = []
     Azimax = []
 
-    for i in np.arange(0,190,10):
+    for i in np.arange(0,190,rotation_step):
         index = np.array(np.where((Azi == i)))[0]
 
         ## search for maximum and minimum A0 in a given frequency range
@@ -137,7 +142,7 @@ def plot_rotationaldata(in_filespec,ID, limfreq_min,limfreq_max):
     else:
         format_min = round(A_min,2)
 
-    ##plot the min and maxima (red and white dots)
+    ### plot the min and maxima (red and white dots)
     plt.scatter(np.deg2rad(max_Azi), np.log(max_freq), c='red', edgecolor='black',
                 label = "Max. Ampl. ("+ str(format_max) + ') at \n' + str(max_Azi) + '° - '
                         + str(max_Azi+180) +'° for $f_0$ ' + format(round(max_freq,2), '.2f') + 'Hz', zorder = 3)
@@ -153,7 +158,7 @@ def plot_rotationaldata(in_filespec,ID, limfreq_min,limfreq_max):
     ax.text(np.radians(180),np.log(ax.get_rmax()/3.5),'Frequency',fontsize=8,
             rotation=90,ha='left',va='center', color= 'white')
 
-    #limits of the frequency and modify the ticks of the frequency
+    # limits of the frequency and modify the ticks of the frequency
     if auto_freq:
         limfreq_min = round(max_freq,1) - 0.4
         limfreq_max = round(max_freq,1) + 0.4
@@ -174,13 +179,14 @@ def plot_rotationaldata(in_filespec,ID, limfreq_min,limfreq_max):
     for label in rlabels:
         label.set_color('white')
 
-    #specify the ticks of the azimuth
+    # Specify the ticks of the azimuth
     ax.set_xticks(np.pi/180. * np.linspace(0,  360, 18, endpoint=False))
     ax.yaxis.set_tick_params(labelsize=9)
 
     plt.legend(loc='best', bbox_to_anchor=(-0.4, -0.35, 0.5, 0.5), frameon=False)
     plt.grid(linestyle='-.', linewidth=0.2, alpha = 1, zorder = 200, color = 'grey')
 
+    # Plot the title
     plt.title("Resonance frequency polarisation of " + ID, y=1.08)
     plt.tight_layout()
     if save_fig:
