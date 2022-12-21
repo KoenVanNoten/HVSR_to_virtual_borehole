@@ -211,7 +211,7 @@ def plot_data(in_filespec,ID, Z):
     plt.title("Bedrock at %.0f" % (bedrock) + " m", size=10)
 
     #save it
-    savefile = os.path.join(out_folder, '%s' % ID + "_VB.png")
+    savefile = os.path.join(out_folder, '%s_VB.png'%ID)
     plt.savefig(savefile, format= 'png', dpi = 600)
     print('')
 
