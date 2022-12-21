@@ -11,7 +11,7 @@
 ### It will pick the azimuth at which the maximum resonance frequency occurs.
 ### Data is read from the database file
 
-### All rotational data is exported to the database file named database_file & _polarisation.csv
+### All rotational data that you plotted is then exported to the database file named database_file & _polarisation_plotted.csv
 ### Following data is exported:
 ### A_max max_freq max_Azi A_min min_freq min_Azi
 ### A_max: maximum amplitude at resonance frequency deduced from the HVSR polarisation analysis (see Fig. 4 of paper)
@@ -27,7 +27,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import matplotlib.ticker as ticker
 
-# ### load the database containing the ID names
+### load the database containing the ID names ("Name" will be used for the title, "Filename" for loading the data
 database_file = 'HVSR database file_f0_from_hv.csv'
 in_folder = 'Data' #Folder containing the Geopsy rotate module file
 out_folder = 'Output' #Folder in which the polarisation figures will be saved
@@ -62,7 +62,7 @@ steps = 0.2
 
 rot_data = []
 
-def plot_rotationaldata(in_filespec,ID, limfreq_min,limfreq_max):
+def plot_rotationaldata(in_filespec,ID, Name, limfreq_min,limfreq_max):
     df = pd.read_csv(in_filespec, delimiter=' ', skiprows=0, engine = 'python')
     freq = df["x"]
     Azi = df["y"]
@@ -89,7 +89,7 @@ def plot_rotationaldata(in_filespec,ID, limfreq_min,limfreq_max):
     freqmax = []
     Azimax = []
 
-    for i in np.arange(0,190,rotation_step):
+    for i in np.arange(0,180+rotation_step,rotation_step):
         index = np.array(np.where((Azi == i)))[0]
 
         ## search for maximum and minimum A0 in a given frequency range
@@ -187,7 +187,7 @@ def plot_rotationaldata(in_filespec,ID, limfreq_min,limfreq_max):
     plt.grid(linestyle='-.', linewidth=0.2, alpha = 1, zorder = 200, color = 'grey')
 
     # Plot the title
-    plt.title("Resonance frequency polarisation of " + ID, y=1.08)
+    plt.title("Resonance frequency polarisation of %s"%Name, y=1.08)
     plt.tight_layout()
     if save_fig:
         plt.savefig(os.path.join(out_folder, '%s'%ID + '_polarisation.png'))
@@ -201,9 +201,11 @@ print('ID', 'A_max', 'max_freq', 'max_Azi','A_min', 'min_freq', 'min_Azi')
 
 if plot_all:
     df2 = pd.read_csv(database_file, delimiter=',', skiprows=0, engine = 'python')
-    IDs = df2["Name"]
+    IDs = df2["Filename"]
     A0s = df2["A0"]
-    for i in IDs:
+    Names = df2["Name"]
+
+    for i,j in zip(IDs, Names):
         HV_file = os.path.join(in_folder, '%s'% i)
         if manual:
             A0_max = A_manual
@@ -211,12 +213,15 @@ if plot_all:
             # set maximum amplitude from A0 provided in the database list
             A0_max = round(A0s[(IDs == i).argmax()] + 1, 0)
         try:
-            plot_rotationaldata(HV_file, i, limfreq_min, limfreq_max)
-        except:
+            plot_rotationaldata(HV_file, i, j, limfreq_min, limfreq_max)
+        # in newer Geopsy versions the rotation data is saved as .hv.grid extension
+        except BaseException as e:
+            HV_file = os.path.join(in_folder, '%s.hv.grid' % i)
+            plot_rotationaldata(HV_file, i, j, limfreq_min, limfreq_max)
             pass
 
     # Export the polarisation data and add it to the HVSR database
-    out_filespec = os.path.splitext(database_file)[0] + "_polarisation.csv"
+    out_filespec = os.path.splitext(database_file)[0] + "_polarisation_plotted.csv"
     outputfile = pd.read_csv(database_file)
     df_polarisation = pd.DataFrame(rot_data, columns = ['A_max', 'max_freq', 'max_Azi','A_min', 'min_freq', 'min_Azi'])
     outputfile = outputfile.join(df_polarisation)
@@ -224,14 +229,22 @@ if plot_all:
 
 else:
     IDs = IDs
-    df2 = pd.read_csv(database_file, delimiter=',', skiprows=0, engine='python', index_col = "Name")
+    df2 = pd.read_csv(database_file, delimiter=',', skiprows=0, engine='python', index_col = "Filename")
     A0s = df2["A0"]
-    for i in IDs:
+    for i,j in zip(IDs, Names):
         HV_file = os.path.join(in_folder, '%s'% i)
         if manual:
             A0_max = A_manual
         else:
             # set maximum amplitude from A0 provided in the database list and add 4
             A0_max = np.array(round(A0s[(i)],0)+1)
-        plot_rotationaldata(HV_file, i, limfreq_min, limfreq_max)
+        plot_rotationaldata(HV_file, i, j, limfreq_min, limfreq_max)
         plt.show()
+
+    # Export the polarisation data and add it to the HVSR database
+    out_filespec = os.path.splitext(database_file)[0] + "_polarisation_plotted.csv"
+    outputfile = pd.read_csv(database_file)
+    df_polarisation = pd.DataFrame(rot_data,
+                                       columns=['A_max', 'max_freq', 'max_Azi', 'A_min', 'min_freq', 'min_Azi'])
+    outputfile = outputfile.join(df_polarisation)
+    outputfile.to_csv(out_filespec, index=False)
