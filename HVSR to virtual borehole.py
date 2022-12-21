@@ -138,6 +138,10 @@ def plot_data(in_filespec,ID, Z):
                     if line.startswith('# Peak amplitude'):
                                  split = line.split('\t')
                                  A0_geopsy = float(split[1]) #A0 picked by geopsy
+                    # in new geopsy versions Peak amplitude is changed by f0 amplitude
+                    if line.startswith('# f0 amplitude'):
+                        split = line.split('\t')
+                        A0_geopsy = float(split[1])  # A0 picked by geopsy
                     if line.startswith('# f0 from windows'):
                                  split = line.strip().split('\t')
                                  f0min = float(split[2])
@@ -207,7 +211,7 @@ def plot_data(in_filespec,ID, Z):
     plt.title("Bedrock at %.0f" % (bedrock) + " m", size=10)
 
     #save it
-    savefile = os.path.join(out_folder, '%s' % ID + ".png")
+    savefile = os.path.join(out_folder, '%s' % ID + "_VB.png")
     plt.savefig(savefile, format= 'png', dpi = 600)
     print('')
 
@@ -215,6 +219,7 @@ def plot_data(in_filespec,ID, Z):
 df_database = pd.read_csv(database_file, header = 0)
 name = df_database['Name']
 Z = df_database['z']
+# give filenames in Data folder
 HV_name = df_database['Filename']
 
 if plot_one:
