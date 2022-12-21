@@ -35,7 +35,7 @@ To facilate reading the HV rotate / polarisation data, this python script plots 
 
 <img src="https://github.com/KoenVanNoten/HVSR_to_virtual_borehole/blob/master/Output/A201_polarisation.png" width="450" height="350" />
 
-## 6. Construct the f0 - Sed Thickness Powerlaw Relation.ipynb:
+## 7. Construct the f0 - Sed Thickness Powerlaw Relation.ipynb:
 This is an Ipython notebook to construct figures 5, 6, 7, 8 and 10 of the Van Noten et al. (2022) paper. This notebook reads the borehole and survey HVSR supplementary data of the paper (see VanNotenetal_JOSE_S1 - Borehole HVSR analysis.csv and VanNotenetal_JOSE_S2 - Survey HVSR analysis.csv). Also the methodology how to create a statistical powerlaw relation is explained. 
 
 ## Installation
