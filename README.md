@@ -22,17 +22,20 @@ Filename = name of the .hv files which need to be plotted.
 ## 3. Get f0s from geopsy hv files.py
 This script reads the HVSR database file and loads one or all HVSR data (min f0, f0, max f0, error, max Amplitude, n of windows) automatically from all .hv files stored in the Data folder. The default setting of Geopsy to export the H/V spectrum is set to 100 samples (100 freq. and Amplitude values), no matter the range in the output frequency sampling. If this default sampling setting is used, a wide output range, e.g. 0.5 Hz to 50 Hz, will pick f0 less accurately than if a narrow range around the peak amplitude is selected. To increase the f0 picking accuracy, one can increase the sample setting to the maximum (e.g. 9999 samples) in Geopsy. Or one can resample the Geopsy output curve by a performing a linear interpolation up to 15000 samples (interpolation used in this script). This results in a slightly different interpolated amplitude maximum and f0 than the one exported by Geopsy. The interpolated values (f0_ip & A0) and its difference with F0 from Geopsy (f0_ip_diff) will be exported into the database file, which will be named as HVSR database file_f0_from_hv.csv.
 
-## 3. HVSR to virtual borehole.py: 
-This script replots one or all .hv files into a f0 versus amplitude plot and to converts the H/V spectrum to a VIRTUAL BOREHOLE using a regression - powerlaw - function between f0 and depth. The output figures will be saved in the output folder. See Van Noten et al. (2022) for explanation of the methodology. The figure in below shows the output of the script:
+## 4. HVSR to virtual borehole.py: 
+This script replots one or all .hv files into a f0 versus amplitude plot and to converts the H/V spectrum to a VIRTUAL BOREHOLE using a regression - powerlaw - function between f0 and depth. The output figures will be saved in the output folder. See Van Noten et al. (2022) for explanation of the methodology. The figure in below shows the output of the script. The figures are saved as "ID_VB.png".
 
 <img src="https://github.com/KoenVanNoten/HVSR_to_virtual_borehole/blob/master/Output/A201.png" width="550" height="360" />
 
-## 4. HVSR polarisation.py:
-The H/V rotational module in Geopsy computes the azimuth in which the resonance frequency has his maximum amplitude. In the Geopsy H/V rotate results, right click on the grid file and export values with the same name as you saved the H/V results (either without extension, see A201 or A202 as example, or as .grid file). Store the data in the Data folder. To facilate reading this polarisation, this python script plots the variation of the amplitude with azimuth in a polar plot. The figures will be save in the Output folder. The IDs to plot will be loaded from the HVSR database file. Polarisation data (Amax, Amin and their corresponding azimuths and frequencies) will be exported into the database file as HVSR database file_f0_from_hv_polarisation.csv which then can be visualised in a GIS. Output figure:
+## 5. Get polarisation data from geopsy grid files.py
+The H/V rotate module in Geopsy computes the azimuth in which the resonance frequency has his maximum amplitude. In the Geopsy H/V rotate results, right click on the grid file and export values with the same name as you saved the H/V results (either without extension, see A201 or A202 as example, or as .grid file). Store the data in the Data folder. Polarisation data (Amax, Amin and their corresponding azimuths and frequencies) will be exported into the database file as HVSR database file_f0_from_hv_polarisation_exported.csv which then can be visualised in a GIS. 
+
+## 6. HVSR polarisation.py:
+To facilate reading the HV rotate / polarisation data, this python script plots the variation of the amplitude with azimuth in a polar plot. The figures will be save in the Output folder as "ID_polarisation.png". The IDs to plot will be loaded from the HVSR database file. Polarisation data (Amax, Amin and their corresponding azimuths and frequencies) will be exported into the database file as HVSR database file_f0_from_hv_polarisation_plotted.csv which then can be visualised in a GIS. Output figure:
 
 <img src="https://github.com/KoenVanNoten/HVSR_to_virtual_borehole/blob/master/Output/A201_polarisation.png" width="450" height="350" />
 
-## 5. Construct the f0 - Sed Thickness Powerlaw Relation.ipynb:
+## 7. Construct the f0 - Sed Thickness Powerlaw Relation.ipynb:
 This is an Ipython notebook to construct figures 5, 6, 7, 8 and 10 of the Van Noten et al. (2022) paper. This notebook reads the borehole and survey HVSR supplementary data of the paper (see VanNotenetal_JOSE_S1 - Borehole HVSR analysis.csv and VanNotenetal_JOSE_S2 - Survey HVSR analysis.csv). Also the methodology how to create a statistical powerlaw relation is explained. 
 
 ## Installation
